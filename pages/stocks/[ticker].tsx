@@ -1,7 +1,7 @@
 // @ts-ignore
 import {useRouter} from "next/router";
 import stockData from "../../public/aapl.json"
-import {Card, Col, Container, Row} from "react-bootstrap";
+import {Card, Col, Nav, Row, Tab, Tabs} from "react-bootstrap";
 import Table from 'react-bootstrap/Table'
 import PastPerformanceChart from "../../components/charts/PastPerformanceChart";
 
@@ -11,46 +11,25 @@ export default function Ticker({chart, stockData}) {
 
     return (
         <>
-            <Container>
-                <Card className="mt-3 mb-3">
-                    <Card.Header>{stockData.quoteType.shortName} ({ticker})</Card.Header>
-                    <Card.Body style={{backgroundColor: '#fff'}}>
-                        <Card.Title> {chart.meta.regularMarketPrice} {chart.meta.currency}</Card.Title>
-                        <Card.Text>
-                            Market Cap: {stockData.summaryDetail.marketCap.fmt}<br/>
-                            Enterprise Value: {stockData.defaultKeyStatistics.enterpriseValue.fmt}<br/>
-                            Shares Outstanding: {stockData.defaultKeyStatistics.sharesOutstanding.fmt}<br/>
-                        </Card.Text>
-                        <Row>
-                            <Col>
-                                <h4>Results</h4>
-                                - Revenue + Earnings<br/>
-                                - EPS + Estimates<br/>
-
-                                <div style={{width: '350px'}}>
-                                    <PastPerformanceChart data={stockData.earningsHistory.history}/>
-                                </div>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <h4>Value Investing</h4>
-                                Dividend Yield: {stockData.summaryDetail.dividendYield.fmt}
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <h4>Short Term Investing</h4>
-                                Shares Short: {stockData.defaultKeyStatistics.sharesShort.fmt}<br/>
-                                Shares Short Prior
-                                Month: {stockData.defaultKeyStatistics.sharesShortPriorMonth.fmt}<br/>
-                                Shares Ratio: {stockData.defaultKeyStatistics.shortRatio.raw}
-                            </Col>
-                        </Row>
+            <Card>
+            <Card.Header>
+                {stockData.quoteType.shortName} ({ticker}) - {chart.meta.regularMarketPrice} {chart.meta.currency}
+            </Card.Header>
+            <Card.Body style={{backgroundColor: '#fff'}}>
+                <Tabs defaultActiveKey="information" id="uncontrolled-tab-example" className="mb-3">
+                    <Tab eventKey="information" title="Information">
+                        <CompanySummarySection stockData={stockData}/>
                         <CompanyInformationSection assetProfile={stockData.assetProfile}/>
-                    </Card.Body>
-                </Card>
-            </Container>
+                    </Tab>
+                    <Tab eventKey="profile" title="Profile">
+                        toto
+                    </Tab>
+                    <Tab eventKey="contact" title="Contact">
+                        tata
+                    </Tab>
+                </Tabs>
+            </Card.Body>
+            </Card>
         </>
     )
 
@@ -131,6 +110,46 @@ function CompanyInformationSection({assetProfile}) {
                             </Table>
                         </Col>
                     </Row>
+                </Col>
+            </Row>
+        </>
+    )
+}
+
+function CompanySummarySection({stockData}) {
+    return (
+        <>
+            <Row>
+                <Col>
+                    Market Cap: {stockData.summaryDetail.marketCap.fmt}<br/>
+                    Enterprise Value: {stockData.defaultKeyStatistics.enterpriseValue.fmt}<br/>
+                    Shares Outstanding: {stockData.defaultKeyStatistics.sharesOutstanding.fmt}<br/>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <h4>Results</h4>
+                    - Revenue + Earnings<br/>
+                    - EPS + Estimates<br/>
+
+                    <div style={{width: '350px'}}>
+                        <PastPerformanceChart data={stockData.earningsHistory.history}/>
+                    </div>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <h4>Value Investing</h4>
+                    Dividend Yield: {stockData.summaryDetail.dividendYield.fmt}
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <h4>Short Term Investing</h4>
+                    Shares Short: {stockData.defaultKeyStatistics.sharesShort.fmt}<br/>
+                    Shares Short Prior
+                    Month: {stockData.defaultKeyStatistics.sharesShortPriorMonth.fmt}<br/>
+                    Shares Ratio: {stockData.defaultKeyStatistics.shortRatio.raw}
                 </Col>
             </Row>
         </>

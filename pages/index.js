@@ -1,4 +1,3 @@
-import Loader from "../components/Loader";
 import toast from "react-hot-toast";
 
 

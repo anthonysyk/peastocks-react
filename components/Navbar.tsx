@@ -1,11 +1,10 @@
 // @ts-ignore
 import Link from 'next/link';
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {UserContext} from "../lib/context";
-import {auth} from "../lib/firebase";
-// @ts-ignore
+import {auth, googleAuthProvider} from "../lib/firebase";
 import {useRouter} from "next/router";
-import {Button, Container, Nav, NavDropdown, Navbar, Form, FormControl} from "react-bootstrap";
+import {Button, Container, Nav, NavDropdown, Navbar, Form, FormControl, Image} from "react-bootstrap";
 
 // Top navbar
 export default function NavbarComponent() {
@@ -17,6 +16,16 @@ export default function NavbarComponent() {
         await auth.signOut()
         router.reload()
     }
+
+    const signInWithGoogle = async () => {
+        await auth.signInWithPopup(googleAuthProvider);
+        router.reload()
+        if (!username) {
+            await router.push("/enter")
+        } else {
+            await router.push("/")
+        }
+    };
 
     const redirectToTickerPage = () => {
         router.push(`/stocks/${search.toUpperCase()}`)
@@ -50,16 +59,17 @@ export default function NavbarComponent() {
                         </Form>
                     </Nav>
                     <Nav>
-                        {!username && (
-                            <Button href="/enter">Log In</Button>
+                        {!user && (
+                            <Button variant="light" onClick={signInWithGoogle} className="ml-5">
+                                <img src={'/google.png'} width="30px"/> Sign in with Google
+                            </Button>
                         )}
                         {username && (
                             <>
                                 <Nav.Link href="/posts">Posts</Nav.Link>
                                 <Nav.Link href="/watchlist">Watchlist</Nav.Link>
-                                <Nav.Link href="/admin">Profile</Nav.Link>
-                                <Button onClick={signOut} variant="outline-light">Sign
-                                    Out</Button>
+                                <Nav.Link href="/admin"><Image roundedCircle src={user.photoURL} width={30} height={30}/></Nav.Link>
+                                <Button onClick={signOut} variant="outline-light" style={{marginLeft:"1rem"}}>Sign Out</Button>
                             </>
                         )}
                     </Nav>
